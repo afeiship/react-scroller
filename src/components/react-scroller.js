@@ -17,7 +17,9 @@ export default class extends React.PureComponent{
     className:React.PropTypes.string,
     options:React.PropTypes.object,
     onRefresh:React.PropTypes.func,
-    refreshOptions:React.PropTypes.object
+    refreshOptions:React.PropTypes.object,
+    onInfinite:React.PropTypes.func,
+    infiniteOptions:React.PropTypes.object,
   };
 
   static defaultProps = {
@@ -26,24 +28,34 @@ export default class extends React.PureComponent{
       scrollingX:false
     },
     onRefresh:noop,
+    onInfinite:noop,
     refreshOptions:{
       distance:50,
       status:'init',
       statusMap:{
         init:'下拉刷新',
         active:'释放更新',
-        running:'数据更新中',
-        finish:'更新完毕'
+        running:'数据更新中'
+      }
+    },
+    infiniteOptions:{
+      distance:-50,
+      status:'init',
+      statusMap:{
+        init:'加载更多',
+        active:'释放更新',
+        running:'数据更新中'
       }
     }
   };
 
   constructor(props) {
     super(props);
-    const {refreshOptions} = this.props;
+    const {refreshOptions,infiniteOptions} = this.props;
     this.state = {
       contentStyle:{},
-      refreshOptions
+      refreshOptions,
+      infiniteOptions
     };
     this.attachDocEvents();
     this.createScroller();
@@ -61,12 +73,8 @@ export default class extends React.PureComponent{
 
   componentDidUpdate(nextProps){
     if(nextProps.children !== this.props.children){
-      this.onChildrenUpdate();
+      this.refresh();
     }
-  }
-
-  onChildrenUpdate(){
-    this.refresh();
   }
 
   createScroller(){
@@ -118,10 +126,28 @@ export default class extends React.PureComponent{
 		document.removeEventListener('touchend',  this._onEnd.bind(this), false);
   }
 
+  checkInfinite(){
+    let {container,content} = this.refs;
+    let {infiniteOptions} = this.state;
+    if(content.getBoundingClientRect().bottom - container.getBoundingClientRect().bottom < infiniteOptions.distance){
+      infiniteOptions.status = 'active';
+    }else{
+      infiniteOptions.status = 'init';
+    }
+    this.setState({infiniteOptions})
+  }
+
   finishPullToRefresh(){
     let {refreshOptions} = this.props;
-    refreshOptions.status='finish';
+    refreshOptions.status='init';
     this.setState({refreshOptions});
+    this._scroller.finishPullToRefresh();
+  }
+
+  finishInfinte(){
+    let {infiniteOptions} = this.props;
+    infiniteOptions.status='init';
+    this.setState({infiniteOptions});
     this._scroller.finishPullToRefresh();
   }
 
@@ -157,14 +183,28 @@ export default class extends React.PureComponent{
       return null;
     }
     this._scroller.doTouchMove(inEvent.touches, inEvent.timeStamp);
+    this.checkInfinite();
     inEvent.preventDefault();
   }
   _onEnd(inEvent){
+
+    let {infiniteOptions} = this.state;
+    let {onInfinite} = this.props;
+
+    if(infiniteOptions.status==='active'){
+      infiniteOptions.status ='running';
+      this.setState({infiniteOptions},()=>{
+        onInfinite.call(this,this);
+      });
+    }else{
+      infiniteOptions.status ='init';
+      this.setState({infiniteOptions});
+    }
     this._scroller.doTouchEnd(inEvent.timeStamp);
   }
 
   render(){
-    const {contentStyle,refreshOptions} = this.state;
+    const {contentStyle,refreshOptions,infiniteOptions} = this.state;
     const {className,children} = this.props;
 
     return (
@@ -180,6 +220,7 @@ export default class extends React.PureComponent{
           <div className="bd">
             {children}
           </div>
+          <div data-status={infiniteOptions.status} className="react-scroller-infinite">{infiniteOptions.statusMap[infiniteOptions.status]}</div>
         </div>
       </div>
     );
