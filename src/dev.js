@@ -1,16 +1,5 @@
 import './dev.scss';
 import ReactScroller from './main';
-import VirtualList from 'react-tiny-virtual-list';
-const data = [
-  'A', 'B', 'C', 'D', 'E', 'F',
-  'A', 'B', 'C', 'D', 'E', 'F',
-  'A', 'B', 'C', 'D', 'E', 'F',
-  'A', 'B', 'C', 'D', 'E', 'F',
-  'A', 'B', 'C', 'D', 'E', 'F',
-  'A', 'B', 'C', 'D', 'E', 'F',
-  'A', 'B', 'C', 'D', 'E', 'F',
-  'A', 'B', 'C', 'D', 'E', 'F'
-];
 class App extends React.Component{
 
   constructor(props){
@@ -66,19 +55,15 @@ class App extends React.Component{
       <div className="hello-react-scroller">
         <button onClick={this._onClick.bind(this)}>Add items!</button>
         <ReactScroller ref='sc' onRefresh={this._onRefresh.bind(this)}>
-          <VirtualList
-            ref='vl'
-            width='100%'
-            height={600}
-            onScroll={this._onScroll.bind(this)}
-            itemCount={data.length}
-            itemSize={50} // Also supports variable heights (array or function getter)
-            renderItem={({index, style}) =>
-              <div key={index} style={style}>
-                Letter: {data[index]}, Row: #{index}
-              </div>
+          my contetn...
+
+          <div className="other-list">
+            {
+              this.state.items.map((item,index)=>{
+                return <div className="item" key={index}>{`item====>${item}`}</div>
+              })
             }
-          />
+          </div>
         </ReactScroller>
     </div>
     );
