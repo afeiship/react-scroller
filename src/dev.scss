@@ -4,7 +4,7 @@ body{
   background-color: #eee;
 }
 .hello-react-scroller{
-  color:#F00;
+  // color:#F00;
 
   textarea{
     border:1px solid #ccc;
@@ -33,27 +33,31 @@ body{
     bottom:0;
     >.react-scroller-content{
       background-color: #fff;
-      // padding:10px;
-
       >.bd{
         box-sizing: border-box;
         padding:10px;
       }
-
-      >.react-scroller-refresher{
-        background-color: #eee;
-        text-align: center;
-        line-height: 50px;
-        color:#999;
-      }
-
-      >.react-scroller-infinite{
-        background-color: #eee;
-        text-align: center;
-        line-height: 50px;
-        color:#999;
-      }
     }
+
+
+    //refresher && infiniter:
+    .react-status-manager{
+      color:#999;
+    }
+
+    .react-refresher{
+      width:100%;
+      position: absolute;
+      transform: translateY(-100%);
+    }
+
+    .react-infiniter{
+      position: relative;
+      background-color: #eee;
+    }
+
+
+
   }
   button{
     background: #3cc51f;

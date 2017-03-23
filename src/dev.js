@@ -21,11 +21,10 @@ class Infiniter extends React.PureComponent{
   render(){
     const {status} = this.props;
     return (
-      <ReactStatusManager className='react-infiniter' status={status} statusList={['init','active','running','empty']}>
+      <ReactStatusManager className='react-infiniter' status={status} statusList={['init','active','running']}>
         <span>加载更多</span>
         <span>释放更新</span>
         <img width="30" src={loadingImg} alt='' />
-        <span>暂无数据</span>
       </ReactStatusManager>
     );
   }
@@ -122,6 +121,11 @@ class App extends React.Component{
 
 
           </textarea>
+          <p className="p">my contetn...</p>
+          <p className="p">my contetn...</p>
+          <p className="p">my contetn...</p>
+          <p className="p">my contetn...</p>
+          <p className="p">my contetn...</p>
           <p className="p">my contetn...</p>
           <p className="p">my contetn...</p>
           <p className="p">my contetn...</p>

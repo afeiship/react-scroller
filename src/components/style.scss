@@ -1,21 +1,2 @@
 .react-scroller{
-  color:#000;
-
-  .react-refresher{
-    width:100%;
-    position: absolute;
-    transform: translateY(-100%);
-    color:#999;
-  }
-
-  .react-infiniter{
-    position: relative;
-    background-color: #eee;
-    transform: translateY(0%);
-
-
-    &[data-status=running]{
-      // transform: translateY(-100%);
-    }
-  }
 }
