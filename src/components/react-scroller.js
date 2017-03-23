@@ -129,6 +129,7 @@ export default class extends React.PureComponent{
   checkInfinite(){
     let {container,content} = this.refs;
     let {infiniteOptions} = this.state;
+
     if(content.getBoundingClientRect().bottom - container.getBoundingClientRect().bottom < infiniteOptions.distance){
       infiniteOptions.status = 'active';
     }else{
@@ -211,16 +212,20 @@ export default class extends React.PureComponent{
       <div
       ref='container'
       className={classNames('react-scroller',className)}
-      onTouchStart={this._onStart.bind(this)}
-      >
+      onTouchStart={this._onStart.bind(this)}>
         <div
         ref='content'
         className="react-scroller-content" style={contentStyle}>
-          <div data-status={refreshOptions.status} style={{marginTop:-refreshOptions.distance}} className="react-scroller-refresher">{refreshOptions.statusMap[refreshOptions.status]}</div>
+          <div
+          data-status={refreshOptions.status}
+          style={{marginTop:-refreshOptions.distance}}
+          className="react-scroller-refresher">{refreshOptions.statusMap[refreshOptions.status]}</div>
           <div className="bd">
             {children}
           </div>
-          <div data-status={infiniteOptions.status} className="react-scroller-infinite">{infiniteOptions.statusMap[infiniteOptions.status]}</div>
+          <div
+          data-status={infiniteOptions.status}
+          className="react-scroller-infinite">{infiniteOptions.statusMap[infiniteOptions.status]}</div>
         </div>
       </div>
     );

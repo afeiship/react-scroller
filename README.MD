@@ -1,6 +1,5 @@
 # react-scroller
-> React scroller based on zynga/scroller.
-
+> React scroller based on next-scroller.
 
 ## resource:
 + http://www.cnblogs.com/Kummy/p/4966937.html

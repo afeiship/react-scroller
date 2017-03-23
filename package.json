@@ -1,7 +1,7 @@
 {
   "name": "react-scroller",
   "version": "0.1.0",
-  "description": "React scroller based on zynga/scroller.",
+  "description": "React scroller based on next-scroller.",
   "author": "afeiship <1290657123@qq.com>",
   "keywords": [
     "components",

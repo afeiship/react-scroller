@@ -103,23 +103,6 @@ class App extends React.Component{
           <p className="p">my contetn...</p>
           <p className="p">my contetn...</p>
           <p className="p">my contetn...</p>
-          <p className="p">my contetn...</p>
-          <p className="p">my contetn...</p>
-          <p className="p">my contetn...</p>
-          <p className="p">my contetn...</p>
-          <p className="p">my contetn...</p>
-          <p className="p">my contetn...</p>
-          <p className="p">my contetn...</p>
-          <p className="p">my contetn...</p>
-          <p className="p">my contetn...</p>
-          <p className="p">my contetn...</p>
-          <p className="p">my contetn...</p>
-          <p className="p">my contetn...</p>
-          <p className="p">my contetn...</p>
-          <p className="p">my contetn...</p>
-          <p className="p">my contetn...</p>
-          <p className="p">my contetn...</p>
-          <p className="p">my contetn...</p>
 
           <div className="other-list">
             {
