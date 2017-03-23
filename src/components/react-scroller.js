@@ -1,4 +1,5 @@
 import './style.scss';
+import {createElement} from 'react';
 import classNames from 'classnames';
 import Scroller from 'next-scroller';
 import Browser from 'next-browser';
@@ -10,16 +11,15 @@ const perspectiveProperty = vendorPrefix + "Perspective";
 const transformProperty = vendorPrefix + "Transform";
 const supportTransformProperty = helperElem.style[transformProperty] !== undefined;
 const supportPerspectiveProperty = helperElem.style[perspectiveProperty] !== undefined;
-const supportTouchEvents = 'touchstart' in window;
 
 export default class extends React.PureComponent{
   static propTypes = {
     className:React.PropTypes.string,
     options:React.PropTypes.object,
     onRefresh:React.PropTypes.func,
-    refreshOptions:React.PropTypes.object,
+    refresher:React.PropTypes.func,
+    distance:React.PropTypes.array,
     onInfinite:React.PropTypes.func,
-    infiniteOptions:React.PropTypes.object,
   };
 
   static defaultProps = {
@@ -27,39 +27,28 @@ export default class extends React.PureComponent{
       animationDuration:180,
       scrollingX:false
     },
+    status:'init',
     onRefresh:noop,
     onInfinite:noop,
-    refreshOptions:{
-      distance:50,
-      status:'init',
-      statusMap:{
-        init:'下拉刷新',
-        active:'释放更新',
-        running:'数据更新中'
-      }
-    },
-    infiniteOptions:{
-      distance:-50,
-      status:'init',
-      statusMap:{
-        init:'加载更多',
-        active:'释放更新',
-        running:'数据更新中'
-      }
-    }
+    refresher:null,
+    infiniter:null,
+    distances:[50,-50]
   };
 
   constructor(props) {
     super(props);
-    const {refreshOptions,infiniteOptions} = this.props;
-    this.state = {
-      contentStyle:{},
-      refreshOptions,
-      infiniteOptions
-    };
+    this.init();
+  }
+
+  init(){
+    const {refresher,status} = this.props;
     this.attachDocEvents();
     this.createScroller();
-    this.activatePullToRrefresh();
+    refresher && this.activatePullToRrefresh();
+    this.state = {
+      contentStyle:{},
+      status
+    }
   }
 
   componentWillUnmount(){
@@ -84,34 +73,32 @@ export default class extends React.PureComponent{
 
   refresh(){
     let {container,content} = this.refs;
-    let {refreshOptions} = this.props;
     this._scroller.setDimensions(
       container.clientWidth,
       container.clientHeight,
       content.offsetWidth,
-      content.offsetHeight - refreshOptions.distance
+      content.offsetHeight
     );
   }
 
   scrollerRender(){
-    var self = this;
     switch(true){
       case supportPerspectiveProperty:
-        return function(left, top, inZoom) {
+        return (left, top, inZoom) => {
           const transformPropertyValue = 'translate3d(' + (-left) + 'px,' + (-top) + 'px,0) scale(' + inZoom + ')';
-          self.setState({contentStyle:{[transformProperty]:transformPropertyValue}});
+          this.setState({contentStyle:{[transformProperty]:transformPropertyValue}});
         };
       case supportTransformProperty:
-        return function(left, top, inZoom) {
+        return (left, top, inZoom) => {
           const transformPropertyValue = 'translate(' + (-left) + 'px,' + (-top) + 'px) scale(' + inZoom + ')';
-          self.setState({contentStyle:{[transformProperty]:transformPropertyValue}});
+          this.setState({contentStyle:{[transformProperty]:transformPropertyValue}});
         };
       default:
-        return function(left, top, inZoom) {
+        return (left, top, inZoom) => {
           const marginLeft = left ? (-left/inZoom) + 'px' : '';
           const marginTop = top ? (-top/inZoom) + 'px' : '';
           const zoom = inZoom || '';
-          self.setState({contentStyle:{marginLeft,marginTop,inZoom}});
+          this.setState({contentStyle:{marginLeft,marginTop,inZoom}});
         };
     }
   }
@@ -126,45 +113,35 @@ export default class extends React.PureComponent{
 		document.removeEventListener('touchend',  this._onEnd.bind(this), false);
   }
 
-  checkInfinite(){
+  activateInfinite(){
+    const {distances} = this.props;
     let {container,content} = this.refs;
-    let {infiniteOptions} = this.state;
-
-    if(content.getBoundingClientRect().bottom - container.getBoundingClientRect().bottom < infiniteOptions.distance){
-      infiniteOptions.status = 'active';
+    if(content.getBoundingClientRect().bottom - container.getBoundingClientRect().bottom < distances[1]){
+      this.setState({status:'active'});
     }else{
-      infiniteOptions.status = 'init';
+      this.setState({status:'init'})
     }
-    this.setState({infiniteOptions})
-  }
-
-  finishPullToRefresh(){
-    let {refreshOptions} = this.props;
-    refreshOptions.status='init';
-    this.setState({refreshOptions});
-    this._scroller.finishPullToRefresh();
   }
 
   finishInfinte(){
-    let {infiniteOptions} = this.props;
-    infiniteOptions.status='init';
-    this.setState({infiniteOptions});
+    this.setState({status:'init'});
     this._scroller.finishPullToRefresh();
   }
 
   activatePullToRrefresh(){
-    let {onRefresh,refreshOptions} = this.props;
-    this._scroller.activatePullToRefresh(refreshOptions.distance, ()=>{
-      refreshOptions.status = 'active';
-      this.setState({refreshOptions});
+    let {onRefresh,distances} = this.props;
+    this._scroller.activatePullToRefresh(distances[0], ()=>{
+      this.setState({status:'active'});
     }, ()=>{
-      refreshOptions.status = 'init';
-      this.setState({refreshOptions});
+      this.setState({status:'init'});
     }, ()=>{
-      refreshOptions.status = 'running';
-      this.setState({refreshOptions});
+      this.setState({status:'running'});
       onRefresh.call(this,this);
     });
+  }
+
+  finishPullToRefresh(){
+    this._scroller.finishPullToRefresh();
   }
 
   shouldRetainDefault(inEvent){
@@ -184,30 +161,24 @@ export default class extends React.PureComponent{
       return null;
     }
     this._scroller.doTouchMove(inEvent.touches, inEvent.timeStamp);
-    this.checkInfinite();
+    this.activateInfinite();
     inEvent.preventDefault();
   }
   _onEnd(inEvent){
-
-    let {infiniteOptions} = this.state;
+    let {status} = this.state;
     let {onInfinite} = this.props;
-
-    if(infiniteOptions.status==='active'){
-      infiniteOptions.status ='running';
-      this.setState({infiniteOptions},()=>{
-        onInfinite.call(this,this);
-      });
+    if(status === 'active'){
+      this.setState({status:'running'});
+      onInfinite.call(this,this);
     }else{
-      infiniteOptions.status ='init';
-      this.setState({infiniteOptions});
+      this.setState({status:'init'});
     }
     this._scroller.doTouchEnd(inEvent.timeStamp);
   }
 
   render(){
-    const {contentStyle,refreshOptions,infiniteOptions} = this.state;
-    const {className,children} = this.props;
-
+    const {contentStyle,status} = this.state;
+    const {className,children,refresher,infiniter} = this.props;
     return (
       <div
       ref='container'
@@ -216,16 +187,11 @@ export default class extends React.PureComponent{
         <div
         ref='content'
         className="react-scroller-content" style={contentStyle}>
-          <div
-          data-status={refreshOptions.status}
-          style={{marginTop:-refreshOptions.distance}}
-          className="react-scroller-refresher">{refreshOptions.statusMap[refreshOptions.status]}</div>
+          {refresher && createElement(refresher,{status})}
           <div className="bd">
             {children}
           </div>
-          <div
-          data-status={infiniteOptions.status}
-          className="react-scroller-infinite">{infiniteOptions.statusMap[infiniteOptions.status]}</div>
+          {infiniter && createElement(infiniter,{status})}
         </div>
       </div>
     );

@@ -1,5 +1,37 @@
 import './dev.scss';
 import ReactScroller from './main';
+import ReactStatusManager from 'react-status-manager';
+import loadingImg from './loading.svg';
+
+class Refresher extends React.PureComponent{
+  render(){
+    const {status} = this.props;
+    return (
+      <ReactStatusManager className='react-refresher' status={status} statusList={['init','active','running']}>
+        <span>下拉刷新</span>
+        <span>释放更新</span>
+        <img width="30" src={loadingImg} alt='' />
+      </ReactStatusManager>
+    );
+  }
+}
+
+
+class Infiniter extends React.PureComponent{
+  render(){
+    const {status} = this.props;
+    return (
+      <ReactStatusManager className='react-infiniter' status={status} statusList={['init','active','running','empty']}>
+        <span>加载更多</span>
+        <span>释放更新</span>
+        <img width="30" src={loadingImg} alt='' />
+        <span>暂无数据</span>
+      </ReactStatusManager>
+    );
+  }
+}
+
+
 class App extends React.Component{
 
   constructor(props){
@@ -69,11 +101,13 @@ class App extends React.Component{
   render(){
     return (
       <div className="hello-react-scroller">
+
         <button onClick={this._onClick.bind(this)}>Add items!</button>
         <ReactScroller ref='sc'
+        refresher={Refresher}
+        infiniter={Infiniter}
         onInfinite={this._onInfinite.bind(this)}
         onRefresh={this._onRefresh.bind(this)}>
-
           <textarea name="" id="" cols="30" rows="10">
 
 海外网3月22日电 3月22日外交部举行例行记者会，发言人华春莹就以下问题作出回应。
