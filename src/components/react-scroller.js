@@ -1,9 +1,10 @@
 import './style.scss';
-import {createElement} from 'react';
+import React,{PureComponent,createElement} from 'react';
 import classNames from 'classnames';
 import Scroller from 'next-scroller';
 import Browser from 'next-browser';
 import noop from 'noop';
+import {throttle} from 'next-debounce-throttle';
 
 const helperElem = document.createElement("div");
 const vendorPrefix = Browser.jsPrefix();
@@ -11,8 +12,10 @@ const perspectiveProperty = vendorPrefix + "Perspective";
 const transformProperty = vendorPrefix + "Transform";
 const supportTransformProperty = helperElem.style[transformProperty] !== undefined;
 const supportPerspectiveProperty = helperElem.style[perspectiveProperty] !== undefined;
+const retainElementRE=/input|textarea|select/i;
 
-export default class extends React.PureComponent{
+
+export default class extends PureComponent{
   static propTypes = {
     className:React.PropTypes.string,
     options:React.PropTypes.object,
@@ -104,13 +107,13 @@ export default class extends React.PureComponent{
   }
 
   attachDocEvents(){
-    document.addEventListener('touchmove', this._onMove.bind(this), false);
-    document.addEventListener('touchend',  this._onEnd.bind(this), false);
+    document.addEventListener('touchmove', this._onMove, false);
+    document.addEventListener('touchend',  this._onEnd, false);
   }
 
   detachDocEvents(){
-    document.removeEventListener('touchmove', this._onMove.bind(this), false);
-		document.removeEventListener('touchend',  this._onEnd.bind(this), false);
+    document.removeEventListener('touchmove', this._onMove, false);
+		document.removeEventListener('touchend',  this._onEnd, false);
   }
 
   activateInfinite(){
@@ -145,26 +148,26 @@ export default class extends React.PureComponent{
   }
 
   shouldRetainDefault(inEvent){
-    return inEvent.target.tagName.match(/input|textarea|select/i);
+    return inEvent.target.tagName.match(retainElementRE);
   }
 
-  _onStart(inEvent){
+  _onStart = (inEvent)=>{
     if (this.shouldRetainDefault(inEvent)) {
       return null;
     }
     this._scroller.doTouchStart(inEvent.touches, inEvent.timeStamp);
     inEvent.preventDefault();
   }
-
-  _onMove(inEvent){
+  _onMove = (inEvent)=>{
     if (this.shouldRetainDefault(inEvent)) {
       return null;
     }
+
     this._scroller.doTouchMove(inEvent.touches, inEvent.timeStamp);
     this.activateInfinite();
     inEvent.preventDefault();
   }
-  _onEnd(inEvent){
+  _onEnd = (inEvent)=>{
     let {status} = this.state;
     let {onInfinite} = this.props;
     if(status === 'active'){
@@ -183,7 +186,7 @@ export default class extends React.PureComponent{
       <div
       ref='container'
       className={classNames('react-scroller',className)}
-      onTouchStart={this._onStart.bind(this)}>
+      onTouchStart={this._onStart}>
         <div
         ref='content'
         className="react-scroller-content" style={contentStyle}>
