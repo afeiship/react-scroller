@@ -30,6 +30,7 @@ export default class extends PureComponent{
       animationDuration:180,
       scrollingX:false
     },
+    action:'refresh',
     status:'init',
     onRefresh:noop,
     onInfinite:noop,
@@ -72,6 +73,7 @@ export default class extends PureComponent{
   createScroller(){
     const {options} = this.props;
     this._scroller = new Scroller(this.scrollerRender(),options);
+    window.sc=this._scroller;
   }
 
   refresh(){
@@ -118,19 +120,19 @@ export default class extends PureComponent{
 
   activateInfinite(){
     const {distances,infiniter,onInfinite} = this.props;
-    if(infiniter && onInfinite!==noop){
+    if(infiniter){
       let {container,content} = this.refs;
       if(content.getBoundingClientRect().bottom - container.getBoundingClientRect().bottom < distances[1]){
         this.setState({status:'active'});
       }else{
-        this.setState({status:'init'})
+        this.setState({status:'init'});
       }
     }
   }
 
   activatePullToRrefresh(){
     let {distances,refresher,onRefresh} = this.props;
-    if(refresher && onRefresh!==noop){
+    if(refresher){
       this._scroller.activatePullToRefresh(distances[0], ()=>{
         this.setState({status:'active'});
       }, ()=>{
