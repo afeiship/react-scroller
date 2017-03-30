@@ -77,7 +77,7 @@ class App extends React.Component{
   }
 
   _onRefresh(inArgs){
-    setTimeout(function() {
+    setTimeout(()=>{
       console.log('on refresh....');
 			// refreshElem.className = refreshElem.className.replace(" running", "");
 			// insertItems();

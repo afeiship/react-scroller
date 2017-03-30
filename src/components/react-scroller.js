@@ -44,10 +44,10 @@ export default class extends PureComponent{
   }
 
   init(){
-    const {refresher,status} = this.props;
+    const {status} = this.props;
     this.attachDocEvents();
     this.createScroller();
-    refresher && this.activatePullToRrefresh();
+    this.activatePullToRrefresh();
     this.state = {
       contentStyle:{},
       status
@@ -117,30 +117,34 @@ export default class extends PureComponent{
   }
 
   activateInfinite(){
-    const {distances} = this.props;
-    let {container,content} = this.refs;
-    if(content.getBoundingClientRect().bottom - container.getBoundingClientRect().bottom < distances[1]){
-      this.setState({status:'active'});
-    }else{
-      this.setState({status:'init'})
+    const {distances,infiniter,onInfinite} = this.props;
+    if(infiniter && onInfinite!==noop){
+      let {container,content} = this.refs;
+      if(content.getBoundingClientRect().bottom - container.getBoundingClientRect().bottom < distances[1]){
+        this.setState({status:'active'});
+      }else{
+        this.setState({status:'init'})
+      }
+    }
+  }
+
+  activatePullToRrefresh(){
+    let {distances,refresher,onRefresh} = this.props;
+    if(refresher && onRefresh!==noop){
+      this._scroller.activatePullToRefresh(distances[0], ()=>{
+        this.setState({status:'active'});
+      }, ()=>{
+        this.setState({status:'init'});
+      }, ()=>{
+        this.setState({status:'running'});
+        onRefresh.call(this,this);
+      });
     }
   }
 
   finishInfinte(){
     this.setState({status:'init'});
     this._scroller.finishPullToRefresh();
-  }
-
-  activatePullToRrefresh(){
-    let {onRefresh,distances} = this.props;
-    this._scroller.activatePullToRefresh(distances[0], ()=>{
-      this.setState({status:'active'});
-    }, ()=>{
-      this.setState({status:'init'});
-    }, ()=>{
-      this.setState({status:'running'});
-      onRefresh.call(this,this);
-    });
   }
 
   finishPullToRefresh(){
@@ -158,6 +162,7 @@ export default class extends PureComponent{
     this._scroller.doTouchStart(inEvent.touches, inEvent.timeStamp);
     inEvent.preventDefault();
   }
+
   _onMove = (inEvent)=>{
     if (this.shouldRetainDefault(inEvent)) {
       return null;
@@ -167,6 +172,7 @@ export default class extends PureComponent{
     this.activateInfinite();
     inEvent.preventDefault();
   }
+
   _onEnd = (inEvent)=>{
     let {status} = this.state;
     let {onInfinite} = this.props;
