@@ -72,7 +72,6 @@ export default class extends PureComponent{
   createScroller(){
     const {options} = this.props;
     this._scroller = new Scroller(this.scrollerRender(),options);
-    window.sc=this._scroller;
   }
 
   refresh(){
@@ -147,11 +146,11 @@ export default class extends PureComponent{
 
   finishInfinte(){
     this.setState({status:'init'});
-    this._scroller.finishPullToRefresh();
+    this._scroller && this._scroller.finishPullToRefresh();
   }
 
   finishPullToRefresh(){
-    this._scroller.finishPullToRefresh();
+    tthis._scroller && his._scroller.finishPullToRefresh();
   }
 
   shouldRetainDefault(inEvent){
