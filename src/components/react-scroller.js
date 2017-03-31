@@ -150,7 +150,7 @@ export default class extends PureComponent{
   }
 
   finishPullToRefresh(){
-    tthis._scroller && his._scroller.finishPullToRefresh();
+    this._scroller && this._scroller.finishPullToRefresh();
   }
 
   shouldRetainDefault(inEvent){
