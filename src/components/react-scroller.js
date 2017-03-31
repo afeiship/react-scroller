@@ -1,5 +1,5 @@
 import './style.scss';
-import React,{PureComponent,createElement} from 'react';
+import React,{PropTypes,PureComponent,createElement} from 'react';
 import classNames from 'classnames';
 import Scroller from 'next-scroller';
 import Browser from 'next-browser';
@@ -17,12 +17,12 @@ const retainElementRE=/input|textarea|select/i;
 
 export default class extends PureComponent{
   static propTypes = {
-    className:React.PropTypes.string,
-    options:React.PropTypes.object,
-    onRefresh:React.PropTypes.func,
-    refresher:React.PropTypes.func,
-    distance:React.PropTypes.array,
-    onInfinite:React.PropTypes.func,
+    className:PropTypes.string,
+    options:PropTypes.object,
+    onRefresh:PropTypes.func,
+    refresher:PropTypes.func,
+    distance:PropTypes.array,
+    onInfinite:PropTypes.func,
   };
 
   static defaultProps = {
@@ -30,7 +30,6 @@ export default class extends PureComponent{
       animationDuration:180,
       scrollingX:false
     },
-    action:'refresh',
     status:'init',
     onRefresh:noop,
     onInfinite:noop,
@@ -119,10 +118,12 @@ export default class extends PureComponent{
   }
 
   activateInfinite(){
-    const {distances,infiniter,onInfinite} = this.props;
+    const {distances,infiniter} = this.props;
     if(infiniter){
       let {container,content} = this.refs;
-      if(content.getBoundingClientRect().bottom - container.getBoundingClientRect().bottom < distances[1]){
+      const contentBound = content.getBoundingClientRect();
+      const containerBound = container.getBoundingClientRect();
+      if(contentBound.bottom - containerBound.bottom < distances[1]){
         this.setState({status:'active'});
       }else{
         this.setState({status:'init'});
@@ -139,7 +140,7 @@ export default class extends PureComponent{
         this.setState({status:'init'});
       }, ()=>{
         this.setState({status:'running'});
-        onRefresh.call(this,this);
+        this._scroller.__refreshActive && onRefresh.call(this,this);
       });
     }
   }
@@ -169,7 +170,6 @@ export default class extends PureComponent{
     if (this.shouldRetainDefault(inEvent)) {
       return null;
     }
-
     this._scroller.doTouchMove(inEvent.touches, inEvent.timeStamp);
     this.activateInfinite();
     inEvent.preventDefault();
@@ -180,7 +180,7 @@ export default class extends PureComponent{
     let {onInfinite} = this.props;
     if(status === 'active'){
       this.setState({status:'running'});
-      onInfinite.call(this,this);
+      !this._scroller.__refreshActive && onInfinite.call(this,this);
     }else{
       this.setState({status:'init'});
     }
