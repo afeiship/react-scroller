@@ -104,6 +104,7 @@ class App extends React.Component{
 
         <button onClick={this._onClick.bind(this)}>Add items!</button>
         <ReactScroller ref='sc'
+        data-status='test'
         refresher={Refresher}
         infiniter={Infiniter}
         onInfinite={this._onInfinite.bind(this)}

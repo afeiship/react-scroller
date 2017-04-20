@@ -187,21 +187,27 @@ export default class extends PureComponent{
   }
 
   render(){
-    const {contentStyle,status} = this.state;
-    const {className,children,refresher,infiniter} = this.props;
+    const {contentStyle} = this.state;
+    const {
+      className,children,refresher,infiniter,
+      onInfinite,onRefresh,options,distances,status,
+      ...props
+    } = this.props;
+
     return (
       <div
+      {...props}
       ref='container'
       className={classNames('react-scroller',className)}
       onTouchStart={this._onStart}>
         <div
         ref='content'
         className="react-scroller-content" style={contentStyle}>
-          {refresher && createElement(refresher,{status})}
+          {refresher && createElement(refresher,{state:this.state.status})}
           <div className="bd">
             {children}
           </div>
-          {infiniter && createElement(infiniter,{status})}
+          {infiniter && createElement(infiniter,{state:this.state.status})}
         </div>
       </div>
     );
