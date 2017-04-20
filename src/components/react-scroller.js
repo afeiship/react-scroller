@@ -19,6 +19,8 @@ export default class extends PureComponent{
   static propTypes = {
     className:PropTypes.string,
     options:PropTypes.object,
+    refresherStatus:PropTypes.string,
+    infiniterStatus:PropTypes.string,
     onRefresh:PropTypes.func,
     refresher:PropTypes.func,
     infiniter:PropTypes.func,
@@ -31,6 +33,8 @@ export default class extends PureComponent{
       animationDuration:180,
       scrollingX:false
     },
+    refresherStatus:'init',
+    infiniterStatus:'init',
     onRefresh:noop,
     onInfinite:noop,
     refresher:null,
@@ -44,14 +48,15 @@ export default class extends PureComponent{
   }
 
   init(){
+    const {refresherStatus,infiniterStatus} = this.props;
     this.attachDocEvents();
     this.createScroller();
     this.activatePullToRrefresh();
     this.state = {
       contentStyle:{},
-      refresherStatus:'init',
-      infiniterStatus:'init',
-    }
+      refresherStatus,
+      infiniterStatus
+    };
   }
 
   componentWillUnmount(){
@@ -61,6 +66,12 @@ export default class extends PureComponent{
 
   componentDidMount(){
     this.refresh();
+  }
+
+  componentWillUpdate(nextProps,nextState){
+    if(nextProps.infiniterStatus !== this.state.infiniterStatus){
+      this.setState({infiniterStatus:nextProps.infiniterStatus});
+    }
   }
 
   componentDidUpdate(nextProps){
@@ -189,10 +200,11 @@ export default class extends PureComponent{
   }
 
   render(){
-    const {contentStyle,infiniterStatus,refresherStatus} = this.state;
+    const {contentStyle} = this.state;
     const {
       className,children,refresher,infiniter,
       onInfinite,onRefresh,options,distances,
+      refresherStatus,infiniterStatus,
       ...props
     } = this.props;
 
@@ -205,11 +217,11 @@ export default class extends PureComponent{
         <div
         ref='content'
         className="react-scroller-content" style={contentStyle}>
-          {refresher && createElement(refresher,{status:refresherStatus})}
+          {refresher && createElement(refresher,{status:this.state.refresherStatus})}
           <div className="bd">
             {children}
           </div>
-          {infiniter && createElement(infiniter,{status:infiniterStatus})}
+          {infiniter && createElement(infiniter,{status:this.state.infiniterStatus})}
         </div>
       </div>
     );

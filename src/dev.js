@@ -37,7 +37,8 @@ class App extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      items:[]
+      items:[],
+      infiniterStatus:'init',
     };
   }
   getChildren(){
@@ -97,7 +98,8 @@ class App extends React.Component{
   }
 
   _setNoData(){
-    this.refs.sc.setState({infiniterStatus:'nomore'})
+    this.setState({infiniterStatus:'nomore'})
+    // this.refs.sc.setState({infiniterStatus:'nomore'})
   }
 
 
@@ -112,6 +114,7 @@ class App extends React.Component{
         data-status='test'
         refresher={Refresher}
         infiniter={Infiniter}
+        infiniterStatus={this.state.infiniterStatus}
         onInfinite={this._onInfinite.bind(this)}
         onRefresh={this._onRefresh.bind(this)}>
           <textarea name="" id="" cols="30" rows="10">
