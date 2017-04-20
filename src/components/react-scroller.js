@@ -203,11 +203,11 @@ export default class extends PureComponent{
         <div
         ref='content'
         className="react-scroller-content" style={contentStyle}>
-          {refresher && createElement(refresher,{state:this.state.status})}
+          {refresher && createElement(refresher,{status:this.state.status})}
           <div className="bd">
             {children}
           </div>
-          {infiniter && createElement(infiniter,{state:this.state.status})}
+          {infiniter && createElement(infiniter,{status:this.state.status})}
         </div>
       </div>
     );
