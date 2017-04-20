@@ -68,10 +68,8 @@ export default class extends PureComponent{
     this.refresh();
   }
 
-  componentWillUpdate(nextProps,nextState){
-    if(nextProps.infiniterStatus !== this.state.infiniterStatus){
-      this.setState({infiniterStatus:nextProps.infiniterStatus});
-    }
+  componentWillReceiveProps(inNextProps){
+    this.setState(inNextProps);
   }
 
   componentDidUpdate(nextProps){
