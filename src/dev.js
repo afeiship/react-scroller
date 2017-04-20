@@ -96,6 +96,9 @@ class App extends React.Component{
 		}, 1000);
   }
 
+  _setNoData(){
+    this.refs.sc.setState({infiniterStatus:'nomore'})
+  }
 
 
   render(){
@@ -103,6 +106,8 @@ class App extends React.Component{
       <div className="hello-react-scroller">
 
         <button onClick={this._onClick.bind(this)}>Add items!</button>
+
+        <button onClick={this._setNoData.bind(this)}>Set no more datea</button>
         <ReactScroller ref='sc'
         data-status='test'
         refresher={Refresher}

@@ -13,7 +13,7 @@ const transformProperty = vendorPrefix + "Transform";
 const supportTransformProperty = helperElem.style[transformProperty] !== undefined;
 const supportPerspectiveProperty = helperElem.style[perspectiveProperty] !== undefined;
 const retainElementRE=/input|textarea|select/i;
-
+const INNER_STATUS = ['init','active','running'];
 
 export default class extends PureComponent{
   static propTypes = {
@@ -21,6 +21,7 @@ export default class extends PureComponent{
     options:PropTypes.object,
     onRefresh:PropTypes.func,
     refresher:PropTypes.func,
+    infiniter:PropTypes.func,
     distance:PropTypes.array,
     onInfinite:PropTypes.func,
   };
@@ -30,7 +31,6 @@ export default class extends PureComponent{
       animationDuration:180,
       scrollingX:false
     },
-    status:'init',
     onRefresh:noop,
     onInfinite:noop,
     refresher:null,
@@ -44,13 +44,13 @@ export default class extends PureComponent{
   }
 
   init(){
-    const {status} = this.props;
     this.attachDocEvents();
     this.createScroller();
     this.activatePullToRrefresh();
     this.state = {
       contentStyle:{},
-      status
+      refresherStatus:'init',
+      infiniterStatus:'init',
     }
   }
 
@@ -118,14 +118,15 @@ export default class extends PureComponent{
 
   activateInfinite(){
     const {distances,infiniter} = this.props;
-    if(infiniter){
+    const isInnerStatus = INNER_STATUS.indexOf(this.state.infiniterStatus)>-1;
+    if(infiniter && isInnerStatus){
       let {container,content} = this.refs;
       const contentBound = content.getBoundingClientRect();
       const containerBound = container.getBoundingClientRect();
       if(contentBound.bottom - containerBound.bottom < distances[1]){
-        this.setState({status:'active'});
+        this.setState({infiniterStatus:'active'});
       }else{
-        this.setState({status:'init'});
+        this.setState({infiniterStatus:'init'});
       }
     }
   }
@@ -134,18 +135,21 @@ export default class extends PureComponent{
     let {distances,refresher,onRefresh} = this.props;
     if(refresher){
       this._scroller.activatePullToRefresh(distances[0], ()=>{
-        this.setState({status:'active'});
+        this.setState({refresherStatus:'active'});
       }, ()=>{
-        this.setState({status:'init'});
+        this.setState({
+          refresherStatus:'init',
+          infiniterStatus:'init',
+        });
       }, ()=>{
-        this.setState({status:'running'});
+        this.setState({refresherStatus:'running'});
         this._scroller.__refreshActive && onRefresh.call(this,this);
       });
     }
   }
 
   finishInfinte(){
-    this.setState({status:'init'});
+    this.setState({infiniterStatus:'init'});
     this._scroller && this._scroller.finishPullToRefresh();
   }
 
@@ -175,22 +179,20 @@ export default class extends PureComponent{
   }
 
   _onEnd = (inEvent)=>{
-    let {status} = this.state;
+    let {infiniterStatus} = this.state;
     let {onInfinite} = this.props;
-    if(status === 'active'){
-      this.setState({status:'running'});
+    if(infiniterStatus === 'active'){
+      this.setState({infiniterStatus:'running'});
       !this._scroller.__refreshActive && onInfinite.call(this,this);
-    }else{
-      this.setState({status:'init'});
     }
     this._scroller.doTouchEnd(inEvent.timeStamp);
   }
 
   render(){
-    const {contentStyle} = this.state;
+    const {contentStyle,infiniterStatus,refresherStatus} = this.state;
     const {
       className,children,refresher,infiniter,
-      onInfinite,onRefresh,options,distances,status,
+      onInfinite,onRefresh,options,distances,
       ...props
     } = this.props;
 
@@ -203,11 +205,11 @@ export default class extends PureComponent{
         <div
         ref='content'
         className="react-scroller-content" style={contentStyle}>
-          {refresher && createElement(refresher,{status:this.state.status})}
+          {refresher && createElement(refresher,{status:refresherStatus})}
           <div className="bd">
             {children}
           </div>
-          {infiniter && createElement(infiniter,{status:this.state.status})}
+          {infiniter && createElement(infiniter,{status:infiniterStatus})}
         </div>
       </div>
     );
