@@ -126,10 +126,10 @@ export default class extends PureComponent{
   }
 
   activateInfinite(){
+    let {container,content} = this.refs;
     const {distances,infiniter} = this.props;
     const isInnerStatus = INNER_STATUS.indexOf(this.state.infiniterStatus)>-1;
-    if(infiniter && isInnerStatus){
-      let {container,content} = this.refs;
+    if(infiniter && isInnerStatus && container && content){
       const contentBound = content.getBoundingClientRect();
       const containerBound = container.getBoundingClientRect();
       if(contentBound.bottom - containerBound.bottom < distances[1]){
