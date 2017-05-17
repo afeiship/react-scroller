@@ -14,7 +14,7 @@ const perspectiveProperty = vendorPrefix + "Perspective";
 const transformProperty = vendorPrefix + "Transform";
 const supportTransformProperty = helperElem.style[transformProperty] !== undefined;
 const supportPerspectiveProperty = helperElem.style[perspectiveProperty] !== undefined;
-const retainElementRE = /input|textarea|select|button|img|a/i;
+const retainElementRE = /input|textarea|select|button|img|figure|a/i;
 const INNER_STATUS = ['init', 'active', 'running'];
 
 export default class extends PureComponent {
