@@ -1,4 +1,5 @@
 import './dev.scss';
+
 import ReactScroller from './main';
 import ReactStatusManager from 'react-status-manager';
 import loadingImg from './loading.svg';
@@ -102,6 +103,10 @@ class App extends React.Component{
     // this.refs.sc.setState({infiniterStatus:'nomore'})
   }
 
+  _click1(){
+    alert('div can click!');
+  }
+
 
   render(){
     return (
@@ -131,6 +136,9 @@ class App extends React.Component{
 
 
           </textarea>
+          <div className="div-click" onClick={this._click1}>
+            DIV for click....
+          </div>
           <p className="p">my contetn...</p>
           <p className="p">my contetn...</p>
           <p className="p">my contetn...</p>

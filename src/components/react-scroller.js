@@ -1,8 +1,10 @@
 import './style.scss';
-import React,{PropTypes,PureComponent,createElement} from 'react';
-import classNames from 'classnames';
-import Scroller from 'next-scroller';
+
+import React,{PropTypes, PureComponent, createElement} from 'react';
+
 import Browser from 'next-browser';
+import Scroller from 'next-scroller';
+import classNames from 'classnames';
 import noop from 'noop';
 import {throttle} from 'next-debounce-throttle';
 
@@ -12,7 +14,7 @@ const perspectiveProperty = vendorPrefix + "Perspective";
 const transformProperty = vendorPrefix + "Transform";
 const supportTransformProperty = helperElem.style[transformProperty] !== undefined;
 const supportPerspectiveProperty = helperElem.style[perspectiveProperty] !== undefined;
-const retainElementRE=/input|textarea|select/i;
+const retainElementRE=/input|textarea|select|section|div|a|img/i;
 const INNER_STATUS = ['init','active','running'];
 
 export default class extends PureComponent{
