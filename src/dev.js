@@ -136,9 +136,9 @@ class App extends React.Component{
 
 
           </textarea>
-          <div className="div-click" onClick={this._click1}>
+          <button className="div-click" onClick={this._click1}>
             DIV for click....
-          </div>
+          </button>
           <p className="p">my contetn...</p>
           <p className="p">my contetn...</p>
           <p className="p">my contetn...</p>
