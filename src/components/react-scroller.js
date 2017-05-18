@@ -1,5 +1,3 @@
-import './style.scss';
-
 import React, {PureComponent, createElement} from 'react';
 
 import Browser from 'next-browser';
@@ -14,7 +12,7 @@ const perspectiveProperty = vendorPrefix + "Perspective";
 const transformProperty = vendorPrefix + "Transform";
 const supportTransformProperty = helperElem.style[transformProperty] !== undefined;
 const supportPerspectiveProperty = helperElem.style[perspectiveProperty] !== undefined;
-const retainElementRE = /input|textarea|select|button|img|figure|a/i;
+const retainElementRE = /input|textarea|select|button|figure|a/i;
 const INNER_STATUS = ['init', 'active', 'running'];
 
 export default class extends PureComponent {

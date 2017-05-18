@@ -122,6 +122,20 @@ class App extends React.Component{
         infiniterStatus={this.state.infiniterStatus}
         onInfinite={this._onInfinite.bind(this)}
         onRefresh={this._onRefresh.bind(this)}>
+        <p>
+          <img onClick={()=>{
+            alert('img click!')
+          }} src="http://placeholder.qiniudn.com/375x375" alt=""/>
+        </p>
+        <p>
+          <img src="http://placeholder.qiniudn.com/375x375" alt=""/>
+        </p>
+        <p>
+          <img src="http://placeholder.qiniudn.com/375x375" alt=""/>
+        </p>
+        <p>
+          <img src="http://placeholder.qiniudn.com/375x375" alt=""/>
+        </p>
           <textarea name="" id="" cols="30" rows="10">
 
 海外网3月22日电 3月22日外交部举行例行记者会，发言人华春莹就以下问题作出回应。
