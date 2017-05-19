@@ -6,14 +6,21 @@ import Scroller from 'next-scroller';
 import classNames from 'classnames';
 import noop from 'noop';
 
+const userAgent = navigator.userAgent;
 const helperElem = document.createElement("div");
 const vendorPrefix = Browser.jsPrefix();
 const perspectiveProperty = vendorPrefix + "Perspective";
 const transformProperty = vendorPrefix + "Transform";
 const supportTransformProperty = helperElem.style[transformProperty] !== undefined;
 const supportPerspectiveProperty = helperElem.style[perspectiveProperty] !== undefined;
-const retainElementRE = /input|textarea|select|button|figure|a/i;
+const retainElementRE = /input|textarea|select/i;
 const INNER_STATUS = ['init', 'active', 'running'];
+
+//devices judgements:
+const deviceIsWindowsPhone = userAgent.indexOf("Windows Phone") >= 0;
+const deviceIsAndroid = userAgent.indexOf('Android') > 0 && !deviceIsWindowsPhone;
+const deviceIsIOS = /iP(ad|hone|od)/.test(userAgent) && !deviceIsWindowsPhone;
+
 
 export default class extends PureComponent {
   static propTypes = {
@@ -171,11 +178,11 @@ export default class extends PureComponent {
   }
 
   _onStart = (inEvent) => {
-    if (this.shouldRetainDefault(inEvent)) {
-      return null;
+    if (!this.shouldRetainDefault(inEvent) && deviceIsIOS) {
+      inEvent.preventDefault();
     }
     this._scroller.doTouchStart(inEvent.touches, inEvent.timeStamp);
-    inEvent.preventDefault();
+
   };
 
   _onMove = (inEvent) => {
