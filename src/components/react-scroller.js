@@ -37,8 +37,11 @@ export default class extends PureComponent {
 
   static defaultProps = {
     options: {
-      animationDuration: 180,
-      scrollingX: false
+      animationDuration: 300,
+      scrollingX: false,
+      speedMultiplier:0.8,
+      penetrationDeceleration: 0.1,
+      penetrationAcceleration: 0.1
     },
     refresherStatus: 'init',
     infiniterStatus: 'init',

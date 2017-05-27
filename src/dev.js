@@ -2,7 +2,8 @@ import './dev.scss';
 
 import ReactScroller from './main';
 import ReactStatusManager from 'react-status-manager';
-import loadingImg from './loading.svg';
+import ReactSwiper from 'react-swiper';
+import loadingImg from './loading.gif';
 
 class Refresher extends React.PureComponent{
   render(){
@@ -109,6 +110,12 @@ class App extends React.Component{
 
 
   render(){
+    const images = [
+      require('./assets/1_s.jpg'),
+      require('./assets/2_s.jpg'),
+      require('./assets/3_s.jpg'),
+      require('./assets/4_s.jpg'),
+    ];
     return (
       <div className="hello-react-scroller">
 
@@ -127,6 +134,14 @@ class App extends React.Component{
             alert('img move!')
           }}  src="http://placeholder.qiniudn.com/100x100" alt=""/>
         </figure>
+        <ReactSwiper followFinger={false}>
+        {
+          images.map(item=>{
+            return <img src={item} />
+          })
+        }
+        </ReactSwiper>
+
           <textarea name="" id="" cols="30" rows="10">
 
 海外网3月22日电 3月22日外交部举行例行记者会，发言人华春莹就以下问题作出回应。
