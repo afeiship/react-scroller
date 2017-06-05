@@ -33,6 +33,7 @@ export default class extends PureComponent {
     infiniter: PropTypes.func,
     distance: PropTypes.array,
     onInfinite: PropTypes.func,
+    onScroll: PropTypes.func,
   };
 
   static defaultProps = {
@@ -47,6 +48,7 @@ export default class extends PureComponent {
     infiniterStatus: 'init',
     onRefresh: noop,
     onInfinite: noop,
+    onScroll: noop,
     refresher: null,
     infiniter: null,
     distances: [50, -50]
@@ -189,11 +191,14 @@ export default class extends PureComponent {
   };
 
   _onMove = (inEvent) => {
+    const { onScroll } = this.props;
+    const scrollValues = this._scroller.getValues();
     if (this.shouldRetainDefault(inEvent)) {
       return null;
     }
     this._scroller.doTouchMove(inEvent.touches, inEvent.timeStamp);
     this.activateInfinite();
+    onScroll( scrollValues );
     inEvent.preventDefault();
   };
 

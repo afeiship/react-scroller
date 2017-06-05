@@ -108,6 +108,10 @@ class App extends React.Component{
     alert('div can click!');
   }
 
+  _onScroll = e =>{
+    console.log('scroll',e);
+  };
+
 
   render(){
     const images = [
@@ -122,22 +126,17 @@ class App extends React.Component{
         <button onClick={this._onClick.bind(this)}>Add items!</button>
 
         <button onClick={this._setNoData.bind(this)}>Set no more datea</button>
-        <ReactScroller ref='sc'
+        <ReactScroller onScroll={this._onScroll} ref='sc'
         data-status='test'
         refresher={Refresher}
         infiniter={Infiniter}
         infiniterStatus={this.state.infiniterStatus}
         onInfinite={this._onInfinite.bind(this)}
         onRefresh={this._onRefresh.bind(this)}>
-        <figure >
-          <img onClick={()=>{
-            alert('img move!')
-          }}  src="http://placeholder.qiniudn.com/100x100" alt=""/>
-        </figure>
         <ReactSwiper followFinger={false}>
         {
-          images.map(item=>{
-            return <img src={item} />
+          images.map((item,index)=>{
+            return <img key={index} src={item} />
           })
         }
         </ReactSwiper>
