@@ -42,6 +42,8 @@ class App extends React.Component{
       items:[],
       infiniterStatus:'init',
     };
+
+    window.demo = this;
   }
   getChildren(){
     var result = [];

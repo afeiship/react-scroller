@@ -105,6 +105,10 @@ export default class extends PureComponent {
     );
   }
 
+  scrollTo(inLeft,inTop,inAnimate,inZoom){
+    this._scroller.scrollTo(inLeft,inTop,inAnimate,inZoom);
+  }
+
   scrollerRender() {
     switch (true) {
       case supportPerspectiveProperty:
