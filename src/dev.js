@@ -44,7 +44,9 @@ class App extends React.Component{
     };
 
     window.demo = this;
+
   }
+
   getChildren(){
     var result = [];
     for(var i=0;i<100;i++){
@@ -55,6 +57,12 @@ class App extends React.Component{
     return result;
   }
 
+
+  componentDidMount(){
+    this.refs.sc.on('scroll',(inArgs)=>{
+      console.log(inArgs);
+    })
+  }
 
   addMore(){
     let {items} = this.state;
@@ -128,7 +136,7 @@ class App extends React.Component{
         <button onClick={this._onClick.bind(this)}>Add items!</button>
 
         <button onClick={this._setNoData.bind(this)}>Set no more datea</button>
-        <ReactScroller onScroll={this._onScroll} ref='sc'
+        <ReactScroller ref='sc'
         data-status='test'
         refresher={Refresher}
         infiniter={Infiniter}

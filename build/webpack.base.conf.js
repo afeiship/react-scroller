@@ -15,6 +15,7 @@ var externals = process.env.NODE_ENV === 'production' ? {
   'react-dom': 'react-dom',
   'noop': 'noop',
   'prop-types': 'prop-types',
+  'react-event-emitter': 'react-event-emitter',
   'next-dom-event': 'next-dom-event',
   'next-browser': 'next-browser',
   'next-scroller': 'next-scroller',

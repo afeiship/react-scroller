@@ -3,6 +3,7 @@ import React, {PureComponent, createElement} from 'react';
 import NxBrowser from 'next-browser';
 import NxDomEvent from 'next-dom-event';
 import PropTypes from 'prop-types';
+import ReactEventEmitter from 'react-event-emitter';
 import Scroller from 'next-scroller';
 import classNames from 'classnames';
 import noop from 'noop';
@@ -23,7 +24,7 @@ const deviceIsAndroid = userAgent.indexOf('Android') > 0 && !deviceIsWindowsPhon
 const deviceIsIOS = /iP(ad|hone|od)/.test(userAgent) && !deviceIsWindowsPhone;
 
 
-export default class extends PureComponent {
+export default class extends ReactEventEmitter {
   static propTypes = {
     className: PropTypes.string,
     options: PropTypes.object,
@@ -72,6 +73,8 @@ export default class extends PureComponent {
       infiniterStatus
     };
   }
+
+  componentAttachEvents(){}
 
   attachDocEvents(){
     this._loadRes = NxDomEvent.on(window,'load',()=>{
@@ -219,6 +222,7 @@ export default class extends PureComponent {
     }
     this._scroller.doTouchMove(inEvent.touches, inEvent.timeStamp);
     this.activateInfinite();
+    this.fire('scroll', scrollValues );
     onScroll( scrollValues );
     inEvent.preventDefault();
   };
