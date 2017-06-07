@@ -86,7 +86,6 @@ export default class extends ReactEventEmitter {
     this.detachDocEvents();
     this._scroller = null;
     this._mouted = false;
-    this._loadRes = null;
   }
 
   componentDidMount() {
