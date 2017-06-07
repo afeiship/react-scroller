@@ -1,6 +1,7 @@
 import React, {PureComponent, createElement} from 'react';
 
-import Browser from 'next-browser';
+import NxBrowser from 'next-browser';
+import NxDomEvent from 'next-dom-event';
 import PropTypes from 'prop-types';
 import Scroller from 'next-scroller';
 import classNames from 'classnames';
@@ -8,7 +9,7 @@ import noop from 'noop';
 
 const userAgent = navigator.userAgent;
 const helperElem = document.createElement("div");
-const vendorPrefix = Browser.jsPrefix();
+const vendorPrefix = NxBrowser.jsPrefix();
 const perspectiveProperty = vendorPrefix + "Perspective";
 const transformProperty = vendorPrefix + "Transform";
 const supportTransformProperty = helperElem.style[transformProperty] !== undefined;
@@ -57,6 +58,7 @@ export default class extends PureComponent {
   constructor(props) {
     super(props);
     this.init();
+    this._mouted = false;
   }
 
   init() {
@@ -71,13 +73,22 @@ export default class extends PureComponent {
     };
   }
 
+  attachDocEvents(){
+    this._loadRes = NxDomEvent.on(window,'load',()=>{
+      this.refresh();
+    });
+  }
+
   componentWillUnmount() {
     this.detachDocEvents();
     this._scroller = null;
+    this._mouted = false;
+    this._loadRes = null;
   }
 
   componentDidMount() {
     this.refresh();
+    this._mouted = true;
   }
 
   componentWillReceiveProps(inNextProps) {
@@ -88,6 +99,18 @@ export default class extends PureComponent {
     if (nextProps.children !== this.props.children) {
       this.refresh();
     }
+  }
+
+  attachDocEvents() {
+    this._loadRes = NxDomEvent.on(window,'load',this._onRefresh);
+    this._touchmoveRes = NxDomEvent.on(document,'touchmove',this._onMove );
+    this._touchmoveRes = NxDomEvent.on(document,'touchend', this._onEnd );
+  }
+
+  detachDocEvents() {
+    this._loadRes = null;
+    this._touchmoveRes = null;
+    this._touchmoveRes = null;
   }
 
   createScroller() {
@@ -105,12 +128,12 @@ export default class extends PureComponent {
     );
   }
 
-  scrollTo(inLeft,inTop,inAnimate,inZoom){
-    this._scroller.scrollTo(inLeft,inTop,inAnimate,inZoom);
+  scrollTo( inLeft,inTop,inAnimate,inZoom ){
+    this._scroller.scrollTo( inLeft,inTop,inAnimate,inZoom );
   }
 
   scrollerRender() {
-    switch (true) {
+    switch (true && this._mouted) {
       case supportPerspectiveProperty:
         return (left, top, inZoom) => {
           const transformPropertyValue = 'translate3d(' + (-left) + 'px,' + (-top) + 'px,0) scale(' + inZoom + ')';
@@ -129,16 +152,6 @@ export default class extends PureComponent {
           this.setState({contentStyle: {marginLeft, marginTop, inZoom}});
         };
     }
-  }
-
-  attachDocEvents() {
-    document.addEventListener('touchmove', this._onMove, false);
-    document.addEventListener('touchend', this._onEnd, false);
-  }
-
-  detachDocEvents() {
-    document.removeEventListener('touchmove', this._onMove, false);
-    document.removeEventListener('touchend', this._onEnd, false);
   }
 
   activateInfinite() {
@@ -192,6 +205,10 @@ export default class extends PureComponent {
     }
     this._scroller.doTouchStart(inEvent.touches, inEvent.timeStamp);
 
+  };
+
+  _onRefresh = () => {
+    this.refresh();
   };
 
   _onMove = (inEvent) => {
