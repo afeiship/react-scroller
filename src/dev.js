@@ -151,6 +151,8 @@ class App extends React.Component{
         }
         </ReactSwiper>
 
+          <a href="#test">Baidu</a>
+
           <textarea name="" id="" cols="30" rows="10">
 
 海外网3月22日电 3月22日外交部举行例行记者会，发言人华春莹就以下问题作出回应。

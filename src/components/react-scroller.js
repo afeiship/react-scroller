@@ -73,13 +73,14 @@ export default class extends ReactEventEmitter {
       infiniterStatus
     };
   }
-
   componentAttachEvents(){}
 
   componentWillUnmount() {
-    this.detachDocEvents();
-    this._scroller = null;
+    // this.detachDocEvents();
+    // this._scroller = null;
     this._mouted = false;
+    // super.componentWillUnmount();
+    console.log(this);
   }
 
   componentDidMount() {
@@ -104,6 +105,7 @@ export default class extends ReactEventEmitter {
   }
 
   detachDocEvents() {
+    console.log(this,this._loadRes.destroy);
     this._loadRes.destory();
     this._touchmoveRes.destory();
     this._touchendRes.destory();
@@ -129,23 +131,23 @@ export default class extends ReactEventEmitter {
   }
 
   scrollerRender() {
-    switch (true && this._mouted) {
+    switch (true) {
       case supportPerspectiveProperty:
         return (left, top, inZoom) => {
           const transformPropertyValue = 'translate3d(' + (-left) + 'px,' + (-top) + 'px,0) scale(' + inZoom + ')';
-          this.setState({contentStyle: {[transformProperty]: transformPropertyValue}});
+          this._mouted && this.setState({contentStyle: {[transformProperty]: transformPropertyValue}});
         };
       case supportTransformProperty:
         return (left, top, inZoom) => {
           const transformPropertyValue = 'translate(' + (-left) + 'px,' + (-top) + 'px) scale(' + inZoom + ')';
-          this.setState({contentStyle: {[transformProperty]: transformPropertyValue}});
+          this._mouted && this.setState({contentStyle: {[transformProperty]: transformPropertyValue}});
         };
       default:
         return (left, top, inZoom) => {
           const marginLeft = left ? (-left / inZoom) + 'px' : '';
           const marginTop = top ? (-top / inZoom) + 'px' : '';
           const zoom = inZoom || '';
-          this.setState({contentStyle: {marginLeft, marginTop, inZoom}});
+          this._mouted && this.setState({contentStyle: {marginLeft, marginTop, inZoom}});
         };
     }
   }
