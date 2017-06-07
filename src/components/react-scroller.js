@@ -111,9 +111,9 @@ export default class extends ReactEventEmitter {
   }
 
   detachDocEvents() {
-    this._loadRes = null;
-    this._touchmoveRes = null;
-    this._touchmoveRes = null;
+    this._loadRes.destory();
+    this._touchmoveRes.destory();
+    this._touchmoveRes.destory();
   }
 
   createScroller() {
