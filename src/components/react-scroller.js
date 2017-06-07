@@ -76,12 +76,6 @@ export default class extends ReactEventEmitter {
 
   componentAttachEvents(){}
 
-  attachDocEvents(){
-    this._loadRes = NxDomEvent.on(window,'load',()=>{
-      this.refresh();
-    });
-  }
-
   componentWillUnmount() {
     this.detachDocEvents();
     this._scroller = null;
@@ -106,13 +100,13 @@ export default class extends ReactEventEmitter {
   attachDocEvents() {
     this._loadRes = NxDomEvent.on(window,'load',this._onRefresh);
     this._touchmoveRes = NxDomEvent.on(document,'touchmove',this._onMove );
-    this._touchmoveRes = NxDomEvent.on(document,'touchend', this._onEnd );
+    this._touchendRes = NxDomEvent.on(document,'touchend', this._onEnd );
   }
 
   detachDocEvents() {
     this._loadRes.destory();
     this._touchmoveRes.destory();
-    this._touchmoveRes.destory();
+    this._touchendRes.destory();
   }
 
   createScroller() {
