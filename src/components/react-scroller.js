@@ -36,6 +36,7 @@ export default class extends ReactEventEmitter {
     distance: PropTypes.array,
     onInfinite: PropTypes.func,
     onScroll: PropTypes.func,
+    onScrollEnd: PropTypes.func,
   };
 
   static defaultProps = {
@@ -51,6 +52,7 @@ export default class extends ReactEventEmitter {
     onRefresh: noop,
     onInfinite: noop,
     onScroll: noop,
+    onScrollEnd: noop,
     refresher: null,
     infiniter: null,
     distances: [50, -50]
@@ -124,6 +126,10 @@ export default class extends ReactEventEmitter {
       content.offsetWidth,
       content.offsetHeight
     );
+  }
+
+  getValues (){
+    return this._scroller.getValues();
   }
 
   scrollTo( inLeft,inTop,inAnimate,inZoom ){
@@ -217,18 +223,20 @@ export default class extends ReactEventEmitter {
     }
     this._scroller.doTouchMove(inEvent.touches, inEvent.timeStamp);
     this.activateInfinite();
-    this.fire('scroll', scrollValues );
     onScroll( scrollValues );
+    this.fire('scroll', scrollValues );
     inEvent.preventDefault();
   };
 
   _onEnd = (inEvent) => {
     let {infiniterStatus} = this.state;
-    let {onInfinite} = this.props;
+    let {onInfinite,onScrollEnd} = this.props;
     if (infiniterStatus === 'active') {
       this.setState({infiniterStatus: 'running'});
       !this._scroller.__refreshActive && onInfinite.call(this, this);
     }
+    onScrollEnd(inEvent);
+    this.fire('scrollEnd',inEvent);
     this._scroller.doTouchEnd(inEvent.timeStamp);
   };
 
