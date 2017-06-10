@@ -3,6 +3,7 @@ import React, {PureComponent, createElement} from 'react';
 import NxBrowser from 'next-browser';
 import NxDomEvent from 'next-dom-event';
 import PropTypes from 'prop-types';
+import Q from 'q';
 import ReactEventEmitter from 'react-event-emitter';
 import Scroller from 'next-scroller';
 import classNames from 'classnames';
@@ -55,7 +56,7 @@ export default class extends ReactEventEmitter {
     onScrollEnd: noop,
     refresher: null,
     infiniter: null,
-    distances: [50, -50]
+    distances: [50, 50]
   };
 
   constructor(props) {
@@ -82,7 +83,6 @@ export default class extends ReactEventEmitter {
     // this._scroller = null;
     this._mouted = false;
     // super.componentWillUnmount();
-    console.log(this);
   }
 
   componentDidMount() {
@@ -107,7 +107,6 @@ export default class extends ReactEventEmitter {
   }
 
   detachDocEvents() {
-    console.log(this,this._loadRes.destroy);
     this._loadRes.destory();
     this._touchmoveRes.destory();
     this._touchendRes.destory();
@@ -165,6 +164,7 @@ export default class extends ReactEventEmitter {
     if (infiniter && isInnerStatus && container && content) {
       const contentBound = content.getBoundingClientRect();
       const containerBound = container.getBoundingClientRect();
+      console.log(contentBound.bottom - containerBound.bottom);
       if (contentBound.bottom - containerBound.bottom < distances[1]) {
         this.setState({infiniterStatus: 'active'});
       } else {
@@ -191,8 +191,10 @@ export default class extends ReactEventEmitter {
   }
 
   finishInfinte() {
-    this.setState({infiniterStatus: 'init'});
-    this._scroller && this._scroller.finishPullToRefresh();
+    const isInnerStatus = INNER_STATUS.indexOf(this.state.infiniterStatus) > -1;
+    if(isInnerStatus){
+      this.setState({infiniterStatus: 'init'});
+    }
   }
 
   finishPullToRefresh() {
@@ -208,7 +210,6 @@ export default class extends ReactEventEmitter {
       inEvent.preventDefault();
     }
     this._scroller.doTouchStart(inEvent.touches, inEvent.timeStamp);
-
   };
 
   _onRefresh = () => {
@@ -229,23 +230,38 @@ export default class extends ReactEventEmitter {
   };
 
   _onEnd = (inEvent) => {
-    let {infiniterStatus} = this.state;
-    let {onInfinite,onScrollEnd} = this.props;
-    if (infiniterStatus === 'active') {
-      this.setState({infiniterStatus: 'running'});
-      !this._scroller.__refreshActive && onInfinite.call(this, this);
-    }
-    onScrollEnd(inEvent);
-    this.fire('scrollEnd',inEvent);
+    this.doEnd(inEvent);
+    this.delayCheck();
     this._scroller.doTouchEnd(inEvent.timeStamp);
   };
 
+  doEnd(inEvent){
+    let {infiniterStatus} = this.state;
+    let {onInfinite,onScrollEnd} = this.props;
+    if (infiniterStatus === 'active') {
+      this.setState({infiniterStatus: 'running'},()=>{
+        !this._scroller.__refreshActive && onInfinite.call(this, this);
+      });
+    }
+    onScrollEnd(inEvent);
+    this.fire('scrollEnd',inEvent);
+  }
+
+  delayCheck(inEvent){
+    const timer = setTimeout(()=>{
+      this.activateInfinite();
+      this.doEnd(inEvent);
+      clearTimeout(timer);
+    },500);
+  }
+
   render() {
-    const {contentStyle} = this.state;
+    const { contentStyle } = this.state;
     const {
       className, children, refresher, infiniter,
       onInfinite, onRefresh, options, distances,
       refresherStatus, infiniterStatus,
+      onScroll,onScrollEnd,
       ...props
     } = this.props;
 

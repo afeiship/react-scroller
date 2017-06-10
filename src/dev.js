@@ -25,7 +25,21 @@ class Infiniter extends React.PureComponent{
     return (
       <ReactStatusManager className='react-infiniter' status={status} statusList={['init','active','running','nomore']}>
         <span>加载更多</span>
-        <span>释放更新</span>
+        <span> 释放更新</span>
+        <img width="30" src={loadingImg} alt='' />
+        <span>没有更多数据啦</span>
+      </ReactStatusManager>
+    );
+  }
+}
+
+class NativeInfiniter extends React.PureComponent{
+  render(){
+    const {status} = this.props;
+    return (
+      <ReactStatusManager className='react-infiniter' status={status} statusList={['init','active','running','nomore']}>
+        <span>上滑加载更多</span>
+        <img width="30" src={loadingImg} alt='' />
         <img width="30" src={loadingImg} alt='' />
         <span>没有更多数据啦</span>
       </ReactStatusManager>
@@ -60,7 +74,7 @@ class App extends React.Component{
 
   componentDidMount(){
     this.refs.sc.on('scroll',(inArgs)=>{
-      console.log(inArgs);
+      // console.log(inArgs);
     })
   }
 
@@ -119,7 +133,7 @@ class App extends React.Component{
   }
 
   _onScroll = e =>{
-    console.log('scroll',e);
+    // console.log('scroll',e);
   };
 
 
@@ -139,7 +153,7 @@ class App extends React.Component{
         <ReactScroller ref='sc'
         data-status='test'
         refresher={Refresher}
-        infiniter={Infiniter}
+        infiniter={NativeInfiniter}
         infiniterStatus={this.state.infiniterStatus}
         onInfinite={this._onInfinite.bind(this)}
         onRefresh={this._onRefresh.bind(this)}>

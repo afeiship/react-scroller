@@ -88,6 +88,7 @@
     "next-scroller": "github:afeiship/next-scroller",
     "noop": "github:afeiship/noop",
     "prop-types": "^15.5.10",
+    "q": "^1.5.0",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",
     "react-event-emitter": "github:afeiship/react-event-emitter"
