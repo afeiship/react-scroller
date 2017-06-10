@@ -164,7 +164,6 @@ export default class extends ReactEventEmitter {
     if (infiniter && isInnerStatus && container && content) {
       const contentBound = content.getBoundingClientRect();
       const containerBound = container.getBoundingClientRect();
-      console.log(contentBound.bottom - containerBound.bottom);
       if (contentBound.bottom - containerBound.bottom < distances[1]) {
         this.setState({infiniterStatus: 'active'});
       } else {
