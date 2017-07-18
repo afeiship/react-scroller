@@ -3,7 +3,6 @@ import React, {PureComponent, createElement} from 'react';
 import NxBrowser from 'next-browser';
 import NxDomEvent from 'next-dom-event';
 import PropTypes from 'prop-types';
-import Q from 'q';
 import ReactEventEmitter from 'react-event-emitter';
 import Scroller from 'next-scroller';
 import classNames from 'classnames';
@@ -79,10 +78,10 @@ export default class extends ReactEventEmitter {
   componentAttachEvents(){}
 
   componentWillUnmount() {
-    // this.detachDocEvents();
-    // this._scroller = null;
+    this.detachDocEvents();
+    this._scroller = null;
     this._mouted = false;
-    // super.componentWillUnmount();
+    super.componentWillUnmount();
   }
 
   componentDidMount() {
@@ -107,9 +106,9 @@ export default class extends ReactEventEmitter {
   }
 
   detachDocEvents() {
-    this._loadRes.destory();
-    this._touchmoveRes.destory();
-    this._touchendRes.destory();
+    this._loadRes.destroy();
+    this._touchmoveRes.destroy();
+    this._touchendRes.destroy();
   }
 
   createScroller() {
