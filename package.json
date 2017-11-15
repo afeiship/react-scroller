@@ -86,6 +86,7 @@
     "next-browser": "github:afeiship/next-browser",
     "next-dom-event": "github:afeiship/next-dom-event",
     "next-scroller": "github:afeiship/next-scroller",
+    "next-touch-events": "github:afeiship/next-touch-events",
     "noop": "github:afeiship/noop",
     "prop-types": "^15.5.10",
     "q": "^1.5.0",

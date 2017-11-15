@@ -7,6 +7,8 @@ import ReactEventEmitter from 'react-event-emitter';
 import Scroller from 'next-scroller';
 import classNames from 'classnames';
 import noop from 'noop';
+import nx from 'next-js-core2';
+import NxTouchEvents from 'next-touch-events';
 
 const userAgent = navigator.userAgent;
 const helperElem = document.createElement("div");
@@ -101,8 +103,8 @@ export default class extends ReactEventEmitter {
 
   attachDocEvents() {
     this._loadRes = NxDomEvent.on(window,'load',this._onRefresh);
-    this._touchmoveRes = NxDomEvent.on(document,'touchmove',this._onMove );
-    this._touchendRes = NxDomEvent.on(document,'touchend', this._onEnd );
+    this._touchmoveRes = NxDomEvent.on(document,NxTouchEvents.TOUCH_MOVE,this._onMove );
+    this._touchendRes = NxDomEvent.on(document,NxTouchEvents.TOUCH_END, this._onEnd );
   }
 
   detachDocEvents() {
@@ -204,10 +206,11 @@ export default class extends ReactEventEmitter {
   }
 
   _onStart = (inEvent) => {
+    const touches = this._getTouchEvents( inEvent );
     if (!this.shouldRetainDefault(inEvent) && deviceIsIOS) {
       inEvent.preventDefault();
     }
-    this._scroller.doTouchStart(inEvent.touches, inEvent.timeStamp);
+    this._scroller.doTouchStart(touches, inEvent.timeStamp);
   };
 
   _onRefresh = () => {
@@ -217,10 +220,12 @@ export default class extends ReactEventEmitter {
   _onMove = (inEvent) => {
     const { onScroll } = this.props;
     const scrollValues = this._scroller.getValues();
+    const touches = this._getTouchEvents( inEvent );
     if (this.shouldRetainDefault(inEvent)) {
       return null;
     }
-    this._scroller.doTouchMove(inEvent.touches, inEvent.timeStamp);
+
+    this._scroller.doTouchMove(touches, inEvent.timeStamp);
     this.activateInfinite();
     onScroll( scrollValues );
     this.fire('scroll', scrollValues );
@@ -232,6 +237,13 @@ export default class extends ReactEventEmitter {
     this.delayCheck();
     this._scroller.doTouchEnd(inEvent.timeStamp);
   };
+
+  _getTouchEvents(inEvent){
+    return typeof inEvent.touches != 'undefined' ? inEvent.touches : [{
+      pageX: inEvent.pageX,
+			pageY: inEvent.pageY
+    }]
+  }
 
   doEnd(inEvent){
     let {infiniterStatus} = this.state;
@@ -268,6 +280,7 @@ export default class extends ReactEventEmitter {
         {...props}
         ref='container'
         className={classNames('react-scroller', className)}
+        onMouseDown={this._onStart}
         onTouchStart={this._onStart}>
         <div
           ref='content'

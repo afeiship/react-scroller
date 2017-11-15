@@ -18,6 +18,7 @@ var externals = process.env.NODE_ENV === 'production' ? {
   'react-event-emitter': 'react-event-emitter',
   'next-dom-event': 'next-dom-event',
   'next-browser': 'next-browser',
+  'next-touch-events': 'next-touch-events',
   'next-scroller': 'next-scroller',
   'next-js-core2': 'next-js-core2',
 } : {};
